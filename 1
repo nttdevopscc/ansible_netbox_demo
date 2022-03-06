@@ -1,0 +1,16 @@
+---
+- name: "GATHER DATA FROM NETBOX"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
+  tasks:
+    - name: "GET SITES WITH NB_QUERY"
+      set_fact:
+        sites: "{{ query('netbox.netbox.nb_lookup', 'sites', api_endpoint=netbox_url, token=netbox_token) }}"
+        validate_certs: no
+
+    - debug:
+        msg: "{{ sites | json_query('[*].value.name') }}"

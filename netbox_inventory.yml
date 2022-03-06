@@ -1,13 +1,11 @@
 ---
 plugin: netbox.netbox.nb_inventory
-api_endpoint: http://netbox03
+api_endpoint: http://10.0.15.65
+token: a749afd68ad7e5f2089df9acda1f29caae938c0e
 validate_certs: false
 config_context: false
 group_by:
  - device_roles
  - platforms
-compose:
- ansible_network_os: platform.slug
-query_filters:
- - site: "minnesota01"
- - has_primary_ip: True
+ - tags
+ - sites

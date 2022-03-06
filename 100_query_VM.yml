@@ -1,0 +1,28 @@
+---
+- name: "GATHER DATA FROM NETBOX"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    netbox_url: "{{ lookup('env', 'NETBOX_API') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+  tasks:
+    - name: "GET SITES WITH NB_QUERY"
+      set_fact:
+        sites: "{{ query('netbox.netbox.nb_lookup', 'sites', api_endpoint=netbox_url, token=netbox_token) }}"
+        #       validate_certs: no
+
+    - debug:
+        msg: "{{ sites | json_query('[*].value.name') }}"
+            #        msg: "{{ sites }}"
+
+    - name: "GET VM WITH NB_QUERY"
+      set_fact:
+        vm: "{{ query('netbox.netbox.nb_lookup', 'virtual-machines', api_endpoint=netbox_url, token=netbox_token) }}"
+
+    - debug:
+            #        msg: "{{ vm | json_query('[*].value.name') }}"
+            #        msg: "{{ vm | json_query('[*].value.name || [*].value.role') }}"
+            #        msg: "{{ vm | json_query('[*].value.id') }}"
+            #        msg: "{{ vm | json_query('[*].value.{name: name, idi: id}') }}"
+            msg: "{{ vm | json_query('[*].value.{name: name, id: id, primary_ip4: primary_ip4.address}') }}"

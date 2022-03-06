@@ -1,0 +1,67 @@
+---
+- name: "PLAY 1: SETUP DEVICES WITHIN NETBOX"
+  hosts: localhost
+  connection: local
+  vars:
+    install_state: present
+  tasks:
+    - name: "TASK 0: SETUP SITES"
+      debug:
+              msg: "'{{ lookup('env', 'NETBOX_URL') }}' is the URL environment variable."
+
+    - name: "TASK 1: SETUP SITES"
+      netbox.netbox.netbox_site:
+        netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+        netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+        validate_certs: no
+        data: "{{ site }}"
+        state: "{{ install_state }}"
+      register: site_setup
+      loop: "{{ sites }}"
+      loop_control:
+        loop_var: site
+        label: "{{ site['name'] }}"
+      tags: [ sites, devices ]
+
+
+    - name: "TASK 2: SETUP RACKS"
+      netbox.netbox.netbox_rack:
+        netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+        netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+        data: "{{ rack }}"
+        state: "{{ install_state }}"
+      loop: "{{ racks }}"
+      loop_control:
+        loop_var: rack
+        label: "{{ rack['name'] }}"
+      tags: [ sites, devices ]
+
+    - name: "TASK 3: SETUP MANUFACTURERS"
+      netbox.netbox.netbox_manufacturer:
+        netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+        netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+        data:
+          name: "{{ manufacturer }}"
+        state: "{{ install_state }}"
+      loop: "{{ manufacturers }}"
+      loop_control:
+        loop_var: manufacturer
+      tags: [ devices ]
+
+    - name: "TASK 4: SETUP DEVICE TYPES"
+      netbox.netbox.netbox_device_type:
+        netbox_url: "{{ lookup('env', 'NETBOX_URL') }}"
+        netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+        data:
+          model: "{{ device_type.model }}"
+          manufacturer: "{{ device_type.manufacturer }}"
+          slug: "{{ device_type.slug }}"
+          part_number: "{{ device_type.part_number }}"
+          u_height: 1
+          is_full_depth: "{{ device_type.full_depth }}"
+        state: "{{ install_state }}"
+      loop: "{{ device_types }}"
+      loop_control:
+        loop_var: device_type
+        label: "{{ device_type['model'] }}"
+      tags: [ devices ]
