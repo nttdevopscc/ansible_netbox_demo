@@ -1,0 +1,51 @@
+---
+- name: vms
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  collections:
+    - netbox.netbox
+
+  vars:
+    netbox_url: "https://10.0.15.65"
+    netbox_token: "a749afd68ad7e5f2089df9acda1f29caae938c0e"
+
+  tasks:
+    - name: create vmi
+      netbox.netbox.netbox_virtual_machine:
+      #      netbox_virtual_machine:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        validate_certs: no
+        data:
+          name: jenkins_srv
+          cluster: AWS
+#          virtual_machine_role: vm
+#          platform: debian10
+#          vcpus: 2
+#          memory: 1024
+#          disk: 20
+        state: present
+
+    - name: create interface
+      netbox.netbox.netbox_vm_interface:
+      #      netbox_vm_interface:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          virtual_machine: jenkins_srv
+          name: eth0
+          enabled: true
+        state: present
+
+    - name: set ip address
+      netbox.netbox.netbox_ip_address:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        data:
+          prefix: 10.0.15.71/24
+          status: Active
+          interface:
+            name: eth0
+            virtual_machine: jenkins_srv
+        state: new

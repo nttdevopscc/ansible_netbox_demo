@@ -1,0 +1,61 @@
+---
+- name: "GATHER DATA FROM NETBOX"
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+          #    netbox_url: "{{ lookup('env', 'NETBOX_API') }}"
+          #    netbox_token: "{{ lookup('env', 'NETBOX_TOKEN') }}"
+    netbox_url: "{{ lookup('env', 'NETBOX_API') }}"
+    netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
+
+  tasks:
+    - name: "GET SITES WITH NB_QUERY"
+      set_fact:
+        sites: "{{ query('netbox.netbox.nb_lookup', 'sites', api_endpoint=netbox_url, token=netbox_token) }}"
+
+    - debug:
+        msg: "{{ sites | json_query('[*].value.name') }}"
+
+        #    - name: "TASK 3: GET ROLE ROUTERS AT DEN SITE"
+        #      set_fact:
+        #        den_devices: "{{ query('netbox.netbox.nb_lookup', 'devices', api_filter='site=den role=router', api_endpoint=netbox_url, token=netbox_token) }}"
+
+    - name: "TASK 4: PRINT THE DEVICES OF TYPE ROUTER AT DENVER LOCATION"
+      debug:
+        msg: "{{ den_devices | json_query('[*].value.name') }}"
+
+        #    - name: "TASK 5: GET DEVICES AT DEN & MSP SITES"
+        #      set_fact:
+        #        msp_den_devices: "{{ query('netbox.netbox.nb_lookup', 'devices', api_filter='site=den site=msp', api_endpoint=netbox_url, token=netbox_token) }}"
+
+        #    - name: "TASK 6: PRINT THE DEVICES AT DEN & MSP LOCATIONS"
+        #      debug:
+        #        msg: "{{ msp_den_devices | json_query('[*].value.name') }}{% endaw %}"
+
+    - name: "TASK 7: GET DATA FROM NETBOX VIA THE REST API"
+      uri:
+        url: "{{ lookup('env', 'NETBOX_URL') }}/api/ipam/ip-addresses/"
+              #        url: "{% raw %}{{ lookup('env', 'NETBOX_URL') }}/api/dcim/devices/?site=den"
+              #        url: "{% raw %}{{ lookup('env', 'NETBOX_URL') }}/api/ipam/ip-addresses/"
+        method: "GET"
+        headers:
+          Content-Type: "application/json"
+          Authorization: "token {{ lookup('env', 'NETBOX_API_KEY') }}"
+        status_code: 200
+      register: search_result
+
+    - name: "TASK 8: PRINT LENGTH OF PAGED SETUP"
+      debug:
+        msg:
+          - "Length of result on paginated response: {{ search_result['json']['results'] | length }}"
+          - "Total results (if no paging): {{ search_result['json']['count'] }}"
+
+    - name: "TASK 9: GET DEVICES AT DEN SITE"
+      set_fact:
+        den_devices: "{{ query('netbox.netbox.nb_lookup', 'devices', api_filter='site=den', api_endpoint=netbox_url, token=netbox_token) }}"
+
+    - name: "TASK 10: PRINT THE DEVICES AT DEN LOCATION"
+      debug:
+        msg: "{{ den_devices | json_query('[*].value.name') }}"
+
