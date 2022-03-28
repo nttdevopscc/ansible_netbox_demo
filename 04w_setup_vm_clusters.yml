@@ -13,6 +13,7 @@
             #      - { name: prometheus, address: 192.168.0.104/24 }
             #      - { name: docker01, address: 192.168.0.105/24 }
             #      - { name: docker02, address: 192.168.0.106/24 }
+
     pves:
       - { name: pve01, address: "192.168.0.254/24" }
       - { name: pve02, address: "192.168.0.253/24" }
@@ -59,7 +60,7 @@
         netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
         data:
           name: "{{ item.name }}"
-          cluster: JoshV_Cluster1
+          cluster: AWS
         state: present
       loop: "{{ vms }}"
 
@@ -77,16 +78,16 @@
     - name: "TASK 5: SYS >> ASSIGN IP TO VM"
       uri:
         url: "{{ lookup('env', 'NETBOX_URL') }}/api/ipam/ip-addresses/"
-        method: POST
+        #        method: POST
+        method: GET
         headers: "{{ netbox_headers }}"
         status_code: 201
         body_format: json
         body: {
           "address": "{{ item.address }}",
-          #          "status": 1,
-          "status": active,
-          "interface": "{{ item.name | get_interface_id(netbox_headers) }}"
-          #          "interface": "{{ item.name | get_interface_id('8') }}"
+          "status": 1,
+          #          "interface": "{{ item.name | get_interface_id(netbox_headers) }}"
+          "interface": "{{ item.name }}"
         }
       loop: "{{ vms }}"
 
@@ -96,7 +97,7 @@
         netbox_token: "{{ lookup('env', 'NETBOX_API_KEY') }}"
         data:
           name: "{{ item.name }}"
-          cluster: JoshV_Cluster1
+          cluster: AWS
           primary_ip4: "{{ item.address }}"
         state: present
       loop: "{{ vms }}"

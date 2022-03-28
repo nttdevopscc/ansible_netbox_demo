@@ -8,39 +8,11 @@
     vms:
             #      - { name: gns3, address: 192.168.0.101/24 }
             #      - { name: awx-srv, address: 10.0.15.147/24 }
-            #      - { name: awx-srv, address: 10.0.15.147/24 }
+      - { name: awx-srv, address: 10.0.15.147/24 }
             #      - { name: netbox03, address: 192.168.0.103/24 }
             #      - { name: prometheus, address: 192.168.0.104/24 }
             #      - { name: docker01, address: 192.168.0.105/24 }
             #      - { name: docker02, address: 192.168.0.106/24 }
-      - { name: jenkins_srv, address: 10.0.15.71/24 }
-      - { name: git-bluesky, address: 10.0.15.123/24 }
-      - { name: cmp-sql-srv01, address: 10.0.2.13/24 }
-      - { name: grafana_srv, address: 10.0.15.239/24 }
-      - { name: awx-srv, address: 10.0.15.147/24 }
-      - { name: ad-srv1, address: 10.0.15.50/24 }
-      - { name: eportal-srv, address: 10.0.15.104/24 }
-      - { name: win-bastion01, address: 10.0.0.8/24 }
-      - { name: cmp-srv01, address: 10.0.2.96/24 }
-      - { name: jira-srv01, address: 10.0.15.113/24 }
-      - { name: adfs-srv1, address: 10.0.15.51/24 }
-      - { name: git-srv01, address: 10.0.15.213/24 }
-      - { name: jfrog-srv, address: 10.0.15.133/24 }
-      - { name: fortify-srv, address: 10.0.15.198/24 }
-      - { name: conjur, address: 10.0.15.196/24 }
-      - { name: nginx-srv, address: 10.0.0.184/24 }
-      - { name: cmp-sql-srv2, address: 10.0.2.70/24 }
-      - { name: manageiq-srv, address: 10.0.2.55/24 }
-      - { name: zabbix-srv, address: 10.0.15.86/24 }
-      - { name: jenkins-agent01, address: 10.0.15.247/24 }
-      - { name: cyberark-srv, address: 10.0.15.211/24 }
-      - { name: cyberark-vault, address: 10.0.15.178/24 }
-      - { name: ubuntutest01, address: 10.0.15.249/24 }
-      - { name: nessus-scanner, address: 10.0.15.219/24 }
-      - { name: tenable-srv01, address: 10.0.15.38/24 }
-      - { name: cicd-srv, address: 10.0.2.38/24 }
-      - { name: k-wokernode01, address: 10.0.2.162/24 }
-
     pves:
       - { name: pve01, address: "192.168.0.254/24" }
       - { name: pve02, address: "192.168.0.253/24" }
